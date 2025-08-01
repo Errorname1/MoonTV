@@ -85,5 +85,74 @@
       "api": "https://zy.xmm.hk/api.php/provide/vod",
       "name": "小猫咪资源"
     }
-  }
+  },
+  "custom_category": [
+    {
+      "name": "印尼",
+      "type": "movie",
+      "query": "印尼"
+    }
+  ],
+  "custom_category": [
+    {
+      "name": "泰国",
+      "type": "movie",
+      "query": "泰国"
+    }
+  ],
+  "custom_category": [
+    {
+      "name": "动作",
+      "type": "movie",
+      "query": "动作"
+    }
+  ],
+  "custom_category": [
+    {
+      "name": "喜剧",
+      "type": "movie",
+      "query": "喜剧"
+    }
+  ],
+  "custom_category": [
+    {
+      "name": "爱情",
+      "type": "movie",
+      "query": "爱情"
+    }
+  ],
+  "custom_category": [
+    {
+      "name": "科幻",
+      "type": "movie",
+      "query": "科幻"
+    }
+  ],
+  "custom_category": [
+    {
+      "name": "悬疑",
+      "type": "movie",
+      "query": "悬疑"
+    }
+  ],
+  "custom_category": [
+    {
+      "name": "恐怖",
+      "type": "movie",
+      "query": "恐怖"
+    }
+  ],
+  "custom_category": [
+    {
+      "name": "泰剧",
+      "type": "tv",
+      "query": "泰剧"
+    }
+  ],"custom_category": [
+    {
+      "name": "港剧",
+      "type": "tv",
+      "query": "港剧"
+    }
+  ]
 }
