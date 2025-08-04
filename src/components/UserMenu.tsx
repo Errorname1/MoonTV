@@ -402,10 +402,8 @@ export const UserMenu: React.FC = () => {
 
           {/* 版本信息 */}
           <button
-            onClick={() =>
-              window.open('https://github.com/senshinya/MoonTV', '_blank')
-            }
-            className='w-full px-3 py-2 text-center flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-xs'
+            aria-disabled="true"
+            className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 cursor-default select-none'
           >
             <div className='flex items-center gap-1'>
               <span className='font-mono'>v{CURRENT_VERSION}</span>
