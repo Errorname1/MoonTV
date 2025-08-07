@@ -113,9 +113,44 @@
       "query": "爱情"
     },
     {
+      "name": "古装",
+      "type": "movie",
+      "query": "古装"
+    },
+    {
+      "name": "家庭",
+      "type": "movie",
+      "query": "家庭"
+    },
+    {
+      "name": "言情",
+      "type": "movie",
+      "query": "言情"
+    },
+    {
+      "name": "都市",
+      "type": "movie",
+      "query": "都市"
+    },
+    {
+      "name": "职场",
+      "type": "movie",
+      "query": "职场"
+    },
+    {
+      "name": "武侠",
+      "type": "movie",
+      "query": "武侠"
+    },
+    {
       "name": "科幻",
       "type": "movie",
       "query": "科幻"
+    },
+    {
+      "name": "奇幻",
+      "type": "movie",
+      "query": "奇幻"
     },
     {
       "name": "悬疑",
@@ -123,14 +158,45 @@
       "query": "悬疑"
     },
     {
+      "name": "犯罪",
+      "type": "movie",
+      "query": "犯罪"
+    },
+     {
+      "name": "战争",
+      "type": "movie",
+      "query": "战争"
+    },
+    {
       "name": "恐怖",
       "type": "movie",
       "query": "恐怖"
     },
+    
     {
-      "name": "泰剧",
+      "name": "古装剧",
       "type": "tv",
-      "query": "泰剧"
+      "query": "古装剧"
+    },
+    {
+      "name": "悬疑剧",
+      "type": "tv",
+      "query": "悬疑剧"
+    },
+    {
+      "name": "现代剧",
+      "type": "tv",
+      "query": "现代剧"
+    },
+    {
+      "name": "偶像剧",
+      "type": "tv",
+      "query": "偶像剧"
+    },
+    {
+      "name": "抗日剧",
+      "type": "tv",
+      "query": "抗日剧"
     },
     {
       "name": "港剧",
