@@ -172,31 +172,85 @@
       "type": "movie",
       "query": "恐怖"
     },
-    
     {
-      "name": "古装剧",
+      "name": "Netflix",
       "type": "tv",
-      "query": "古装剧"
+      "query": "Netflix"
     },
     {
-      "name": "悬疑剧",
+      "name": "动作",
       "type": "tv",
-      "query": "悬疑剧"
+      "query": "动作"
     },
     {
-      "name": "现代剧",
+      "name": "喜剧",
       "type": "tv",
-      "query": "现代剧"
+      "query": "喜剧"
     },
     {
-      "name": "偶像剧",
+      "name": "爱情",
       "type": "tv",
-      "query": "偶像剧"
+      "query": "爱情"
     },
     {
-      "name": "抗日剧",
+      "name": "古装",
       "type": "tv",
-      "query": "抗日剧"
+      "query": "古装"
+    },
+    {
+      "name": "家庭",
+      "type": "tv",
+      "query": "家庭"
+    },
+    {
+      "name": "言情",
+      "type": "tv",
+      "query": "言情"
+    },
+    {
+      "name": "都市",
+      "type": "tv",
+      "query": "都市"
+    },
+    {
+      "name": "职场",
+      "type": "tv",
+      "query": "职场"
+    },
+    {
+      "name": "武侠",
+      "type": "tv",
+      "query": "武侠"
+    },
+    {
+      "name": "科幻",
+      "type": "tv",
+      "query": "科幻"
+    },
+    {
+      "name": "奇幻",
+      "type": "tv",
+      "query": "奇幻"
+    },
+    {
+      "name": "悬疑",
+      "type": "tv",
+      "query": "悬疑"
+    },
+    {
+      "name": "犯罪",
+      "type": "tv",
+      "query": "犯罪"
+    },
+     {
+      "name": "战争",
+      "type": "tv",
+      "query": "战争"
+    },
+    {
+      "name": "恐怖",
+      "type": "tv",
+      "query": "恐怖"
     },
     {
       "name": "港剧",
