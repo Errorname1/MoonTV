@@ -114,8 +114,7 @@ export const UserMenu: React.FC = () => {
       if (savedDoubanDataSource !== null) {
         setDoubanDataSource(savedDoubanDataSource);
       } else if (defaultDoubanProxyType) {
-        // 如果没有设置，则设置为直接请求豆瓣
-        setDoubanDataSource('direct');
+        setDoubanDataSource(defaultDoubanProxyType);
       }
 
       const savedDoubanProxyUrl = localStorage.getItem('doubanProxyUrl');
@@ -135,7 +134,7 @@ export const UserMenu: React.FC = () => {
       if (savedDoubanImageProxyType !== null) {
         setDoubanImageProxyType(savedDoubanImageProxyType);
       } else if (defaultDoubanImageProxyType) {
-        setDoubanImageProxyType('direct');
+        setDoubanImageProxyType(defaultDoubanImageProxyType);
       }
 
       const savedDoubanImageProxyUrl = localStorage.getItem(

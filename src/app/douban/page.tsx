@@ -310,6 +310,9 @@ function DoubanPageClient() {
             ? (multiLevelValues.platform as string)
             : '',
           sort: multiLevelValues.sort ? (multiLevelValues.sort as string) : '',
+          label: multiLevelValues.label
+            ? (multiLevelValues.label as string)
+            : '',
         });
       } else {
         data = await getDoubanCategories(getRequestParams(0));
@@ -454,6 +457,9 @@ function DoubanPageClient() {
                 : '',
               sort: multiLevelValues.sort
                 ? (multiLevelValues.sort as string)
+                : '',
+              label: multiLevelValues.label
+                ? (multiLevelValues.label as string)
                 : '',
             });
           } else {
