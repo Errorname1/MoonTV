@@ -16,7 +16,8 @@
     "format:check": "prettier -c .",
     "gen:runtime": "node scripts/convert-config.js",
     "gen:manifest": "node scripts/generate-manifest.js",
-    "gen:version": "node scripts/generate-version.js",
+    "gen:changelog": "node scripts/convert-changelog.js",
+    "check:version": "node scripts/check-version.js",
     "postbuild": "echo 'Build completed - sitemap generation disabled'",
     "prepare": "husky install"
   },

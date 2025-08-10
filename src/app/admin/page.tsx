@@ -1375,7 +1375,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
 
   // 豆瓣数据源选项
   const doubanDataSourceOptions = [
-    { value: 'direct', label: '实例服务端（直接请求豆瓣）' },
+    { value: 'direct', label: '直连（服务器直接请求豆瓣）' },
     { value: 'cors-proxy-zwei', label: 'Cors Proxy By Zwei' },
     {
       value: 'cmliussss-cdn-tencent',
@@ -1611,7 +1611,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
               isD1Storage || isUpstashStorage ? 'opacity-50' : ''
             }`}
           >
-            豆瓣数据源
+            豆瓣数据代理
             {isD1Storage && (
               <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
                 (D1 环境下请通过环境变量修改)
