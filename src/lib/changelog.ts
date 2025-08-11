@@ -11,6 +11,26 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.0.4',
+    date: '2025-08-12',
+    added: ['优化版本管理工作流，实现单点修改'],
+    changed: ['版本号现在从CHANGELOG自动提取，无需手动维护VERSION.txt'],
+    fixed: [
+      // 无修复内容
+    ],
+  },
+  {
+    version: '1.0.3',
+    date: '2025-08-11',
+    added: [
+      // 无新增内容
+    ],
+    changed: ['升级播放器 Artplayer 至版本 5.2.5'],
+    fixed: [
+      // 无修复内容
+    ],
+  },
+  {
     version: '1.0.2',
     date: '2025-08-11',
     added: [

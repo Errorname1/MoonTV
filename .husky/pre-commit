@@ -1,9 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-pnpm check:version
-
 pnpm gen:changelog
+git add VERSION.txt
 git add src/lib/version.ts
 git add src/lib/changelog.ts
 

@@ -109,6 +109,36 @@ export default changelog;
 `;
 }
 
+function updateVersionFile(version) {
+  const versionTxtPath = path.join(process.cwd(), 'VERSION.txt');
+  try {
+    fs.writeFileSync(versionTxtPath, version, 'utf8');
+    console.log(`✅ 已更新 VERSION.txt: ${version}`);
+  } catch (error) {
+    console.error(`❌ 无法更新 VERSION.txt:`, error.message);
+    process.exit(1);
+  }
+}
+
+function updateVersionTs(version) {
+  const versionTsPath = path.join(process.cwd(), 'src/lib/version.ts');
+  try {
+    let content = fs.readFileSync(versionTsPath, 'utf8');
+
+    // 替换 CURRENT_VERSION 常量
+    const updatedContent = content.replace(
+      /const CURRENT_VERSION = ['"`][^'"`]+['"`];/,
+      `const CURRENT_VERSION = '${version}';`
+    );
+
+    fs.writeFileSync(versionTsPath, updatedContent, 'utf8');
+    console.log(`✅ 已更新 version.ts: ${version}`);
+  } catch (error) {
+    console.error(`❌ 无法更新 version.ts:`, error.message);
+    process.exit(1);
+  }
+}
+
 function main() {
   try {
     const changelogPath = path.join(process.cwd(), 'CHANGELOG');
@@ -120,7 +150,14 @@ function main() {
     console.log('正在解析 CHANGELOG 内容...');
     const changelogData = parseChangelog(changelogContent);
 
-    console.log(`找到 ${changelogData.versions.length} 个版本`);
+    if (changelogData.versions.length === 0) {
+      console.error('❌ 未在 CHANGELOG 中找到任何版本');
+      process.exit(1);
+    }
+
+    // 获取最新版本号（CHANGELOG中的第一个版本）
+    const latestVersion = changelogData.versions[0].version;
+    console.log(`🔢 最新版本: ${latestVersion}`);
 
     console.log('正在生成 TypeScript 文件...');
     const tsContent = generateTypeScript(changelogData);
@@ -133,6 +170,11 @@ function main() {
 
     fs.writeFileSync(outputPath, tsContent, 'utf-8');
 
+    // 更新版本文件
+    console.log('正在更新版本文件...');
+    updateVersionFile(latestVersion);
+    updateVersionTs(latestVersion);
+
     console.log(`✅ 成功生成 ${outputPath}`);
     console.log(`📊 版本统计:`);
     changelogData.versions.forEach((version) => {
@@ -140,6 +182,8 @@ function main() {
         `   ${version.version} (${version.date}): +${version.added.length} ~${version.changed.length} !${version.fixed.length}`
       );
     });
+
+    console.log('\n🎉 所有更新完成!');
   } catch (error) {
     console.error('❌ 转换失败:', error);
     process.exit(1);
