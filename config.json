@@ -50,8 +50,8 @@
       "name": "豆瓣资源"
     },
     "mozhua": {
-      "api": "https://mozhuazy.com/api.php/provide/vod",
-      "name": "魔爪资源"
+     "api": "https://mozhuazy.com/api.php/provide/vod",
+     "name": "魔爪资源"
     },
     "mdzy": {
       "api": "https://www.mdzyapi.com/api.php/provide/vod",
@@ -85,5 +85,98 @@
       "api": "https://zy.xmm.hk/api.php/provide/vod",
       "name": "小猫咪资源"
     }
-  }
+  },
+  "custom_category": [
+    {
+      "name": "印尼",
+      "type": "movie",
+      "query": "印尼"
+    },
+    {
+      "name": "泰国",
+      "type": "movie",
+      "query": "泰国"
+    },
+    {
+      "name": "动作",
+      "type": "movie",
+      "query": "动作"
+    },
+    {
+      "name": "喜剧",
+      "type": "movie",
+      "query": "喜剧"
+    },
+    {
+      "name": "爱情",
+      "type": "movie",
+      "query": "爱情"
+    },
+    {
+      "name": "古装",
+      "type": "movie",
+      "query": "古装"
+    },
+    {
+      "name": "家庭",
+      "type": "movie",
+      "query": "家庭"
+    },
+    {
+      "name": "言情",
+      "type": "movie",
+      "query": "言情"
+    },
+    {
+      "name": "都市",
+      "type": "movie",
+      "query": "都市"
+    },
+    {
+      "name": "职场",
+      "type": "movie",
+      "query": "职场"
+    },
+    {
+      "name": "武侠",
+      "type": "movie",
+      "query": "武侠"
+    },
+    {
+      "name": "科幻",
+      "type": "movie",
+      "query": "科幻"
+    },
+    {
+      "name": "奇幻",
+      "type": "movie",
+      "query": "奇幻"
+    },
+    {
+      "name": "悬疑",
+      "type": "movie",
+      "query": "悬疑"
+    },
+    {
+      "name": "犯罪",
+      "type": "movie",
+      "query": "犯罪"
+    },
+     {
+      "name": "战争",
+      "type": "movie",
+      "query": "战争"
+    },
+    {
+      "name": "恐怖",
+      "type": "movie",
+      "query": "恐怖"
+    },
+    
+    {
+      "name": "港剧",
+      "type": "tv",
+      "query": "港剧"
+    }
+  ]
 }
