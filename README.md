@@ -154,12 +154,21 @@
 
 ```bash
 # 拉取预构建镜像
+# 推荐使用具体版本号标签，确保稳定性
+docker pull ghcr.io/lunatechlab/moontv:1.0.4
+# 或拉取最新版本
 docker pull ghcr.io/lunatechlab/moontv:latest
 
 # 运行容器
 # -d: 后台运行  -p: 映射端口 3000 -> 3000
 docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/lunatechlab/moontv:latest
 ```
+
+#### 可用标签
+
+- `ghcr.io/lunatechlab/moontv:1.0.4` - 具体版本号，推荐用于生产环境
+- `ghcr.io/lunatechlab/moontv:latest` - 最新版本，可能包含最新功能但也可能有未测试的变化
+- `ghcr.io/lunatechlab/moontv:pr-{number}` - PR 构建版本，用于测试新功能
 
 访问 `http://服务器 IP:3000` 即可。（需自行到服务器控制台放通 `3000` 端口）
 

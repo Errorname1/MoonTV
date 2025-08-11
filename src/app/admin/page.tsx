@@ -148,10 +148,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
   // 当前登录用户名
   const currentUsername = getAuthInfoFromBrowserCookie()?.username || null;
 
-  // 检测存储类型是否为 d1
-  const isD1Storage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'd1';
+  // 检测存储类型是否为 upstash
   const isUpstashStorage =
     typeof window !== 'undefined' &&
     (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'upstash';
@@ -317,15 +314,10 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
         <div className='flex items-center justify-between'>
           <label
             className={`text-gray-700 dark:text-gray-300 ${
-              isD1Storage || isUpstashStorage ? 'opacity-50' : ''
+              isUpstashStorage ? 'opacity-50' : ''
             }`}
           >
             允许新用户注册
-            {isD1Storage && (
-              <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
-                (D1 环境下请通过环境变量修改)
-              </span>
-            )}
             {isUpstashStorage && (
               <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
                 (Upstash 环境下请通过环境变量修改)
@@ -334,20 +326,15 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
           </label>
           <button
             onClick={() =>
-              !isD1Storage &&
               !isUpstashStorage &&
               toggleAllowRegister(!userSettings.enableRegistration)
             }
-            disabled={isD1Storage || isUpstashStorage}
+            disabled={isUpstashStorage}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
               userSettings.enableRegistration
                 ? 'bg-green-600'
                 : 'bg-gray-200 dark:bg-gray-700'
-            } ${
-              isD1Storage || isUpstashStorage
-                ? 'opacity-50 cursor-not-allowed'
-                : ''
-            }`}
+            } ${isUpstashStorage ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -995,10 +982,7 @@ const CategoryConfig = ({
     from: 'config',
   });
 
-  // 检测存储类型是否为 d1 或 upstash
-  const isD1Storage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'd1';
+  // 检测存储类型是否为 upstash
   const isUpstashStorage =
     typeof window !== 'undefined' &&
     (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'upstash';
@@ -1088,7 +1072,7 @@ const CategoryConfig = ({
   };
 
   const handleDragEnd = (event: any) => {
-    if (isD1Storage || isUpstashStorage) return;
+    if (isUpstashStorage) return;
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     const oldIndex = categories.findIndex(
@@ -1130,14 +1114,10 @@ const CategoryConfig = ({
       >
         <td
           className={`px-2 py-4 ${
-            isD1Storage || isUpstashStorage
-              ? 'text-gray-200'
-              : 'cursor-grab text-gray-400'
+            isUpstashStorage ? 'text-gray-200' : 'cursor-grab text-gray-400'
           }`}
           style={{ touchAction: 'none' }}
-          {...(isD1Storage || isUpstashStorage
-            ? {}
-            : { ...attributes, ...listeners })}
+          {...(isUpstashStorage ? {} : { ...attributes, ...listeners })}
         >
           <GripVertical size={16} />
         </td>
@@ -1175,13 +1155,12 @@ const CategoryConfig = ({
         <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2'>
           <button
             onClick={() =>
-              !isD1Storage &&
               !isUpstashStorage &&
               handleToggleEnable(category.query, category.type)
             }
-            disabled={isD1Storage || isUpstashStorage}
+            disabled={isUpstashStorage}
             className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${
-              isD1Storage || isUpstashStorage
+              isUpstashStorage
                 ? 'bg-gray-400 cursor-not-allowed text-white'
                 : !category.disabled
                 ? 'bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
@@ -1190,7 +1169,7 @@ const CategoryConfig = ({
           >
             {!category.disabled ? '禁用' : '启用'}
           </button>
-          {category.from !== 'config' && !isD1Storage && !isUpstashStorage && (
+          {category.from !== 'config' && !isUpstashStorage && (
             <button
               onClick={() => handleDelete(category.query, category.type)}
               className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700/40 dark:hover:bg-gray-700/60 dark:text-gray-200 transition-colors'
@@ -1217,11 +1196,6 @@ const CategoryConfig = ({
       <div className='flex items-center justify-between'>
         <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
           自定义分类列表
-          {isD1Storage && (
-            <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
-              (D1 环境下请通过配置文件修改)
-            </span>
-          )}
           {isUpstashStorage && (
             <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
               (Upstash 环境下请通过配置文件修改)
@@ -1229,12 +1203,10 @@ const CategoryConfig = ({
           )}
         </h4>
         <button
-          onClick={() =>
-            !isD1Storage && !isUpstashStorage && setShowAddForm(!showAddForm)
-          }
-          disabled={isD1Storage || isUpstashStorage}
+          onClick={() => !isUpstashStorage && setShowAddForm(!showAddForm)}
+          disabled={isUpstashStorage}
           className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-            isD1Storage || isUpstashStorage
+            isUpstashStorage
               ? 'bg-gray-400 cursor-not-allowed text-white'
               : 'bg-green-600 hover:bg-green-700 text-white'
           }`}
@@ -1243,7 +1215,7 @@ const CategoryConfig = ({
         </button>
       </div>
 
-      {showAddForm && !isD1Storage && !isUpstashStorage && (
+      {showAddForm && !isUpstashStorage && (
         <div className='p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 space-y-4'>
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             <input
@@ -1314,7 +1286,7 @@ const CategoryConfig = ({
             </tr>
           </thead>
           <DndContext
-            sensors={isD1Storage || isUpstashStorage ? [] : sensors}
+            sensors={isUpstashStorage ? [] : sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
             autoScroll={false}
@@ -1338,7 +1310,7 @@ const CategoryConfig = ({
       </div>
 
       {/* 保存排序按钮 */}
-      {orderChanged && !isD1Storage && !isUpstashStorage && (
+      {orderChanged && !isUpstashStorage && (
         <div className='flex justify-end'>
           <button
             onClick={handleSaveOrder}
@@ -1418,10 +1390,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
     }
   };
 
-  // 检测存储类型是否为 d1 或 upstash
-  const isD1Storage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'd1';
+  // 检测存储类型是否为 upstash
   const isUpstashStorage =
     typeof window !== 'undefined' &&
     (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'upstash';
@@ -1477,7 +1446,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
 
   // 处理豆瓣数据源变化
   const handleDoubanDataSourceChange = (value: string) => {
-    if (!isD1Storage && !isUpstashStorage) {
+    if (!isUpstashStorage) {
       setSiteSettings((prev) => ({
         ...prev,
         DoubanProxyType: value,
@@ -1487,7 +1456,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
 
   // 处理豆瓣图片代理变化
   const handleDoubanImageProxyChange = (value: string) => {
-    if (!isD1Storage && !isUpstashStorage) {
+    if (!isUpstashStorage) {
       setSiteSettings((prev) => ({
         ...prev,
         DoubanImageProxyType: value,
@@ -1532,15 +1501,10 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
       <div>
         <label
           className={`block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ${
-            isD1Storage || isUpstashStorage ? 'opacity-50' : ''
+            isUpstashStorage ? 'opacity-50' : ''
           }`}
         >
           站点名称
-          {isD1Storage && (
-            <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
-              (D1 环境下请通过环境变量修改)
-            </span>
-          )}
           {isUpstashStorage && (
             <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
               (Upstash 环境下请通过环境变量修改)
@@ -1551,15 +1515,12 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
           type='text'
           value={siteSettings.SiteName}
           onChange={(e) =>
-            !isD1Storage &&
             !isUpstashStorage &&
             setSiteSettings((prev) => ({ ...prev, SiteName: e.target.value }))
           }
-          disabled={isD1Storage || isUpstashStorage}
+          disabled={isUpstashStorage}
           className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-            isD1Storage || isUpstashStorage
-              ? 'opacity-50 cursor-not-allowed'
-              : ''
+            isUpstashStorage ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         />
       </div>
@@ -1568,15 +1529,10 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
       <div>
         <label
           className={`block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ${
-            isD1Storage || isUpstashStorage ? 'opacity-50' : ''
+            isUpstashStorage ? 'opacity-50' : ''
           }`}
         >
           站点公告
-          {isD1Storage && (
-            <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
-              (D1 环境下请通过环境变量修改)
-            </span>
-          )}
           {isUpstashStorage && (
             <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
               (Upstash 环境下请通过环境变量修改)
@@ -1586,19 +1542,16 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
         <textarea
           value={siteSettings.Announcement}
           onChange={(e) =>
-            !isD1Storage &&
             !isUpstashStorage &&
             setSiteSettings((prev) => ({
               ...prev,
               Announcement: e.target.value,
             }))
           }
-          disabled={isD1Storage || isUpstashStorage}
+          disabled={isUpstashStorage}
           rows={3}
           className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-            isD1Storage || isUpstashStorage
-              ? 'opacity-50 cursor-not-allowed'
-              : ''
+            isUpstashStorage ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         />
       </div>
@@ -1608,15 +1561,10 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
         <div>
           <label
             className={`block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ${
-              isD1Storage || isUpstashStorage ? 'opacity-50' : ''
+              isUpstashStorage ? 'opacity-50' : ''
             }`}
           >
             豆瓣数据代理
-            {isD1Storage && (
-              <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
-                (D1 环境下请通过环境变量修改)
-              </span>
-            )}
             {isUpstashStorage && (
               <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
                 (Upstash 环境下请通过环境变量修改)
@@ -1628,11 +1576,9 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
             <button
               type='button'
               onClick={() => setIsDoubanDropdownOpen(!isDoubanDropdownOpen)}
-              disabled={isD1Storage || isUpstashStorage}
+              disabled={isUpstashStorage}
               className={`w-full px-3 py-2.5 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm hover:border-gray-400 dark:hover:border-gray-500 text-left ${
-                isD1Storage || isUpstashStorage
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
+                isUpstashStorage ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
               {
@@ -1652,7 +1598,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
             </div>
 
             {/* 下拉选项列表 */}
-            {isDoubanDropdownOpen && !isD1Storage && !isUpstashStorage && (
+            {isDoubanDropdownOpen && !isUpstashStorage && (
               <div className='absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto'>
                 {doubanDataSourceOptions.map((option) => (
                   <button
@@ -1708,7 +1654,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
           <div>
             <label
               className={`block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ${
-                isD1Storage || isUpstashStorage ? 'opacity-50' : ''
+                isUpstashStorage ? 'opacity-50' : ''
               }`}
             >
               豆瓣代理地址
@@ -1718,18 +1664,15 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
               placeholder='例如: https://proxy.example.com/fetch?url='
               value={siteSettings.DoubanProxy}
               onChange={(e) =>
-                !isD1Storage &&
                 !isUpstashStorage &&
                 setSiteSettings((prev) => ({
                   ...prev,
                   DoubanProxy: e.target.value,
                 }))
               }
-              disabled={isD1Storage || isUpstashStorage}
+              disabled={isUpstashStorage}
               className={`w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 shadow-sm hover:border-gray-400 dark:hover:border-gray-500 ${
-                isD1Storage || isUpstashStorage
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
+                isUpstashStorage ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             />
             <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
@@ -1744,15 +1687,10 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
         <div>
           <label
             className={`block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ${
-              isD1Storage || isUpstashStorage ? 'opacity-50' : ''
+              isUpstashStorage ? 'opacity-50' : ''
             }`}
           >
             豆瓣图片代理
-            {isD1Storage && (
-              <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
-                (D1 环境下请通过环境变量修改)
-              </span>
-            )}
             {isUpstashStorage && (
               <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
                 (Upstash 环境下请通过环境变量修改)
@@ -1768,11 +1706,9 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
                   !isDoubanImageProxyDropdownOpen
                 )
               }
-              disabled={isD1Storage || isUpstashStorage}
+              disabled={isUpstashStorage}
               className={`w-full px-3 py-2.5 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm hover:border-gray-400 dark:hover:border-gray-500 text-left ${
-                isD1Storage || isUpstashStorage
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
+                isUpstashStorage ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
               {
@@ -1792,32 +1728,30 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
             </div>
 
             {/* 下拉选项列表 */}
-            {isDoubanImageProxyDropdownOpen &&
-              !isD1Storage &&
-              !isUpstashStorage && (
-                <div className='absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto'>
-                  {doubanImageProxyTypeOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      type='button'
-                      onClick={() => {
-                        handleDoubanImageProxyChange(option.value);
-                        setIsDoubanImageProxyDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-2.5 text-left text-sm transition-colors duration-150 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                        siteSettings.DoubanImageProxyType === option.value
-                          ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                          : 'text-gray-900 dark:text-gray-100'
-                      }`}
-                    >
-                      <span className='truncate'>{option.label}</span>
-                      {siteSettings.DoubanImageProxyType === option.value && (
-                        <Check className='w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 ml-2' />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
+            {isDoubanImageProxyDropdownOpen && !isUpstashStorage && (
+              <div className='absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto'>
+                {doubanImageProxyTypeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type='button'
+                    onClick={() => {
+                      handleDoubanImageProxyChange(option.value);
+                      setIsDoubanImageProxyDropdownOpen(false);
+                    }}
+                    className={`w-full px-3 py-2.5 text-left text-sm transition-colors duration-150 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                      siteSettings.DoubanImageProxyType === option.value
+                        ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                        : 'text-gray-900 dark:text-gray-100'
+                    }`}
+                  >
+                    <span className='truncate'>{option.label}</span>
+                    {siteSettings.DoubanImageProxyType === option.value && (
+                      <Check className='w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 ml-2' />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
             选择获取豆瓣图片的方式
@@ -1850,7 +1784,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
           <div>
             <label
               className={`block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ${
-                isD1Storage || isUpstashStorage ? 'opacity-50' : ''
+                isUpstashStorage ? 'opacity-50' : ''
               }`}
             >
               豆瓣图片代理地址
@@ -1860,18 +1794,15 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
               placeholder='例如: https://proxy.example.com/fetch?url='
               value={siteSettings.DoubanImageProxy}
               onChange={(e) =>
-                !isD1Storage &&
                 !isUpstashStorage &&
                 setSiteSettings((prev) => ({
                   ...prev,
                   DoubanImageProxy: e.target.value,
                 }))
               }
-              disabled={isD1Storage || isUpstashStorage}
+              disabled={isUpstashStorage}
               className={`w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 shadow-sm hover:border-gray-400 dark:hover:border-gray-500 ${
-                isD1Storage || isUpstashStorage
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
+                isUpstashStorage ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             />
             <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
@@ -1924,15 +1855,10 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
         <div className='flex items-center justify-between'>
           <label
             className={`block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ${
-              isD1Storage || isUpstashStorage ? 'opacity-50' : ''
+              isUpstashStorage ? 'opacity-50' : ''
             }`}
           >
             禁用黄色过滤器
-            {isD1Storage && (
-              <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
-                (D1 环境下请通过环境变量修改)
-              </span>
-            )}
             {isUpstashStorage && (
               <span className='ml-2 text-xs text-gray-500 dark:text-gray-400'>
                 (Upstash 环境下请通过环境变量修改)
@@ -1942,23 +1868,18 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
           <button
             type='button'
             onClick={() =>
-              !isD1Storage &&
               !isUpstashStorage &&
               setSiteSettings((prev) => ({
                 ...prev,
                 DisableYellowFilter: !prev.DisableYellowFilter,
               }))
             }
-            disabled={isD1Storage || isUpstashStorage}
+            disabled={isUpstashStorage}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
               siteSettings.DisableYellowFilter
                 ? 'bg-green-600'
                 : 'bg-gray-200 dark:bg-gray-700'
-            } ${
-              isD1Storage || isUpstashStorage
-                ? 'opacity-50 cursor-not-allowed'
-                : ''
-            }`}
+            } ${isUpstashStorage ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${

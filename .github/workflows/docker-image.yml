@@ -1,11 +1,6 @@
 name: Build & Push Docker image
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
   pull_request_target:
     branches:
       - main
@@ -15,6 +10,10 @@ on:
     types:
       - labeled
       - synchronize
+  workflow_run:
+    workflows: ['Release']
+    types:
+      - completed
 
   workflow_dispatch:
 
@@ -64,11 +63,17 @@ jobs:
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
+
         with:
           images: ghcr.io/${{ steps.lowercase.outputs.owner }}/moontv
           tags: |
             type=ref,event=pr
             type=raw,value=latest,enable={{is_default_branch}}
+            type=match,pattern=v(.*),group=1,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+
+      - name: Get latest tag
+        run: |
+          echo "latest_tag=$(curl -s https://api.github.com/repos/${{ github.repository }}/tags | jq -r '.[0].name // "latest"' | sed 's/^v//')" >> $GITHUB_ENV
 
       - name: Build and push by digest
         id: build
@@ -78,7 +83,8 @@ jobs:
           file: ./Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=ghcr.io/${{ steps.lowercase.outputs.owner }}/moontv,push-by-digest=true,name-canonical=true,push=true
+          tags: ghcr.io/${{ steps.lowercase.outputs.owner }}/moontv:${{ env.latest_tag }}
+          outputs: type=image,name=ghcr.io/${{ steps.lowercase.outputs.owner }}/moontv,name-canonical=true,push=true
 
       - name: Export digest
         run: |
@@ -128,6 +134,7 @@ jobs:
           tags: |
             type=ref,event=pr,prefix=pr-
             type=raw,value=latest,enable={{is_default_branch}}
+            type=match,pattern=v(.*),group=1,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
       - name: Create manifest list and push
         working-directory: /tmp/digests
@@ -171,7 +178,7 @@ jobs:
             构建完成时间：${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}`
             });
 
-  cleanup:
+  cleanup-refresh:
     runs-on: ubuntu-latest
     needs:
       - merge
@@ -184,13 +191,6 @@ jobs:
           repository: ${{ github.repository }}
           retain_days: 0
           keep_minimum_runs: 2
-
-  version-cache-refresh:
-    runs-on: ubuntu-latest
-    needs:
-      - cleanup
-    if: always() && github.event_name != 'pull_request_target'
-    steps:
       - name: Refresh VERSION.txt cache
         run: |
           echo "Refreshing VERSION.txt cache..."

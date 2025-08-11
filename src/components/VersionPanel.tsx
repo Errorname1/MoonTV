@@ -87,58 +87,70 @@ export const VersionPanel: React.FC<VersionPanelProps> = ({
 
   // 解析变更日志格式
   const parseChangelog = (content: string): RemoteChangelogEntry[] => {
-    const entries: RemoteChangelogEntry[] = [];
-    const sections = content.split(/(?=^## )/m);
+    const lines = content.split('\n');
+    const versions: RemoteChangelogEntry[] = [];
+    let currentVersion: RemoteChangelogEntry | null = null;
+    let currentSection: string | null = null;
+    let inVersionContent = false;
 
-    sections.forEach((section) => {
-      if (!section.trim()) return;
+    for (const line of lines) {
+      const trimmedLine = line.trim();
 
-      const versionMatch = section.match(/^## \[([^\]]+)\]/);
-      if (!versionMatch) return;
+      // 匹配版本行: ## [X.Y.Z] - YYYY-MM-DD
+      const versionMatch = trimmedLine.match(
+        /^## \[([\d.]+)\] - (\d{4}-\d{2}-\d{2})$/
+      );
+      if (versionMatch) {
+        if (currentVersion) {
+          versions.push(currentVersion);
+        }
 
-      const version = versionMatch[1];
-      const dateMatch = section.match(/\(([^)]+)\)/);
-      const date = dateMatch ? dateMatch[1] : '';
-
-      const added: string[] = [];
-      const changed: string[] = [];
-      const fixed: string[] = [];
-
-      // 解析各个部分
-      const addedMatch = section.match(/### Added\n([\s\S]*?)(?=### |$)/);
-      if (addedMatch) {
-        added.push(
-          ...addedMatch[1]
-            .split('\n')
-            .filter((line) => line.trim().startsWith('-'))
-            .map((line) => line.trim().substring(1).trim())
-        );
+        currentVersion = {
+          version: versionMatch[1],
+          date: versionMatch[2],
+          added: [],
+          changed: [],
+          fixed: [],
+        };
+        currentSection = null;
+        inVersionContent = true;
+        continue;
       }
 
-      const changedMatch = section.match(/### Changed\n([\s\S]*?)(?=### |$)/);
-      if (changedMatch) {
-        changed.push(
-          ...changedMatch[1]
-            .split('\n')
-            .filter((line) => line.trim().startsWith('-'))
-            .map((line) => line.trim().substring(1).trim())
-        );
+      // 如果遇到下一个版本或到达文件末尾，停止处理当前版本
+      if (inVersionContent && currentVersion) {
+        // 匹配章节标题
+        if (trimmedLine === '### Added') {
+          currentSection = 'added';
+          continue;
+        } else if (trimmedLine === '### Changed') {
+          currentSection = 'changed';
+          continue;
+        } else if (trimmedLine === '### Fixed') {
+          currentSection = 'fixed';
+          continue;
+        }
+
+        // 匹配条目: - 内容
+        if (trimmedLine.startsWith('- ') && currentSection) {
+          const entry = trimmedLine.substring(2);
+          if (currentSection === 'added') {
+            currentVersion.added.push(entry);
+          } else if (currentSection === 'changed') {
+            currentVersion.changed.push(entry);
+          } else if (currentSection === 'fixed') {
+            currentVersion.fixed.push(entry);
+          }
+        }
       }
+    }
 
-      const fixedMatch = section.match(/### Fixed\n([\s\S]*?)(?=### |$)/);
-      if (fixedMatch) {
-        fixed.push(
-          ...fixedMatch[1]
-            .split('\n')
-            .filter((line) => line.trim().startsWith('-'))
-            .map((line) => line.trim().substring(1).trim())
-        );
-      }
+    // 添加最后一个版本
+    if (currentVersion) {
+      versions.push(currentVersion);
+    }
 
-      entries.push({ version, date, added, changed, fixed });
-    });
-
-    return entries;
+    return versions;
   };
 
   // 渲染变更日志条目

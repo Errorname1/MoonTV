@@ -1631,9 +1631,6 @@ function PlayPageClient() {
       artPlayerRef.current.on('video:timeupdate', () => {
         const now = Date.now();
         let interval = 5000;
-        if (process.env.NEXT_PUBLIC_STORAGE_TYPE === 'd1') {
-          interval = 10000;
-        }
         if (process.env.NEXT_PUBLIC_STORAGE_TYPE === 'upstash') {
           interval = 20000;
         }

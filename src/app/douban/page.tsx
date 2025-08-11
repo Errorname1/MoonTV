@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { GetBangumiCalendarData } from '@/lib/bangumi.client';
 import {
   getDoubanCategories,
   getDoubanList,
@@ -37,6 +38,7 @@ function DoubanPageClient() {
     primarySelection: '',
     secondarySelection: '',
     multiLevelSelection: {} as Record<string, string>,
+    selectedWeekday: '',
     currentPage: 0,
   });
 
@@ -51,7 +53,7 @@ function DoubanPageClient() {
   const [primarySelection, setPrimarySelection] = useState<string>(() => {
     if (type === 'movie') return '热门';
     if (type === 'tv' || type === 'show') return '最近热门';
-    if (type === 'anime') return '番剧';
+    if (type === 'anime') return '每日放送';
     return '';
   });
   const [secondarySelection, setSecondarySelection] = useState<string>(() => {
@@ -73,6 +75,9 @@ function DoubanPageClient() {
     sort: 'T',
   });
 
+  // 星期选择器状态
+  const [selectedWeekday, setSelectedWeekday] = useState<string>('');
+
   // 获取自定义分类数据
   useEffect(() => {
     const runtimeConfig = (window as any).RUNTIME_CONFIG;
@@ -88,6 +93,7 @@ function DoubanPageClient() {
       primarySelection,
       secondarySelection,
       multiLevelSelection: multiLevelValues,
+      selectedWeekday,
       currentPage,
     };
   }, [
@@ -95,6 +101,7 @@ function DoubanPageClient() {
     primarySelection,
     secondarySelection,
     multiLevelValues,
+    selectedWeekday,
     currentPage,
   ]);
 
@@ -151,7 +158,7 @@ function DoubanPageClient() {
         setPrimarySelection('最近热门');
         setSecondarySelection('show');
       } else if (type === 'anime') {
-        setPrimarySelection('番剧');
+        setPrimarySelection('每日放送');
         setSecondarySelection('全部');
       } else {
         setPrimarySelection('');
@@ -188,6 +195,7 @@ function DoubanPageClient() {
         primarySelection: string;
         secondarySelection: string;
         multiLevelSelection: Record<string, string>;
+        selectedWeekday: string;
         currentPage: number;
       },
       snapshot2: {
@@ -195,6 +203,7 @@ function DoubanPageClient() {
         primarySelection: string;
         secondarySelection: string;
         multiLevelSelection: Record<string, string>;
+        selectedWeekday: string;
         currentPage: number;
       }
     ) => {
@@ -202,6 +211,7 @@ function DoubanPageClient() {
         snapshot1.type === snapshot2.type &&
         snapshot1.primarySelection === snapshot2.primarySelection &&
         snapshot1.secondarySelection === snapshot2.secondarySelection &&
+        snapshot1.selectedWeekday === snapshot2.selectedWeekday &&
         snapshot1.currentPage === snapshot2.currentPage &&
         JSON.stringify(snapshot1.multiLevelSelection) ===
           JSON.stringify(snapshot2.multiLevelSelection)
@@ -244,6 +254,7 @@ function DoubanPageClient() {
       primarySelection,
       secondarySelection,
       multiLevelSelection: multiLevelValues,
+      selectedWeekday,
       currentPage: 0,
     };
 
@@ -273,6 +284,31 @@ function DoubanPageClient() {
           });
         } else {
           throw new Error('没有找到对应的分类');
+        }
+      } else if (type === 'anime' && primarySelection === '每日放送') {
+        const calendarData = await GetBangumiCalendarData();
+        const weekdayData = calendarData.find(
+          (item) => item.weekday.en === selectedWeekday
+        );
+        if (weekdayData) {
+          data = {
+            code: 200,
+            message: 'success',
+            list: weekdayData.items.map((item) => ({
+              id: item.id?.toString() || '',
+              title: item.name_cn || item.name,
+              poster:
+                item.images.large ||
+                item.images.common ||
+                item.images.medium ||
+                item.images.small ||
+                item.images.grid,
+              rate: item.rating?.score?.toString() || '',
+              year: item.air_date?.split('-')?.[0] || '',
+            })),
+          };
+        } else {
+          throw new Error('没有找到对应的日期');
         }
       } else if (type === 'anime') {
         data = await getDoubanRecommends({
@@ -343,6 +379,7 @@ function DoubanPageClient() {
     primarySelection,
     secondarySelection,
     multiLevelValues,
+    selectedWeekday,
     getRequestParams,
     customCategories,
   ]);
@@ -376,6 +413,7 @@ function DoubanPageClient() {
     primarySelection,
     secondarySelection,
     multiLevelValues,
+    selectedWeekday,
     loadInitialData,
   ]);
 
@@ -389,6 +427,7 @@ function DoubanPageClient() {
           primarySelection,
           secondarySelection,
           multiLevelSelection: multiLevelValues,
+          selectedWeekday,
           currentPage,
         };
 
@@ -414,6 +453,13 @@ function DoubanPageClient() {
             } else {
               throw new Error('没有找到对应的分类');
             }
+          } else if (type === 'anime' && primarySelection === '每日放送') {
+            // 每日放送模式下，不进行数据请求，返回空数据
+            data = {
+              code: 200,
+              message: 'success',
+              list: [],
+            };
           } else if (type === 'anime') {
             data = await getDoubanRecommends({
               kind: primarySelection === '番剧' ? 'tv' : 'movie',
@@ -498,6 +544,7 @@ function DoubanPageClient() {
     secondarySelection,
     customCategories,
     multiLevelValues,
+    selectedWeekday,
   ]);
 
   // 设置滚动监听
@@ -630,6 +677,10 @@ function DoubanPageClient() {
     [multiLevelValues]
   );
 
+  const handleWeekdayChange = useCallback((weekday: string) => {
+    setSelectedWeekday(weekday);
+  }, []);
+
   const getPageTitle = () => {
     // 根据 type 生成标题
     return type === 'movie'
@@ -641,6 +692,13 @@ function DoubanPageClient() {
       : type === 'show'
       ? '综艺'
       : '自定义';
+  };
+
+  const getPageDescription = () => {
+    if (type === 'anime' && primarySelection === '每日放送') {
+      return '来自 Bangumi 番组计划的精选内容';
+    }
+    return '来自豆瓣的精选内容';
   };
 
   const getActivePath = () => {
@@ -663,7 +721,7 @@ function DoubanPageClient() {
               {getPageTitle()}
             </h1>
             <p className='text-sm sm:text-base text-gray-600 dark:text-gray-400'>
-              来自豆瓣的精选内容
+              {getPageDescription()}
             </p>
           </div>
 
@@ -677,6 +735,7 @@ function DoubanPageClient() {
                 onPrimaryChange={handlePrimaryChange}
                 onSecondaryChange={handleSecondaryChange}
                 onMultiLevelChange={handleMultiLevelChange}
+                onWeekdayChange={handleWeekdayChange}
               />
             </div>
           ) : (
@@ -710,6 +769,9 @@ function DoubanPageClient() {
                       rate={item.rate}
                       year={item.year}
                       type={type === 'movie' ? 'movie' : ''} // 电影类型严格控制，tv 不控
+                      isBangumi={
+                        type === 'anime' && primarySelection === '每日放送'
+                      }
                     />
                   </div>
                 ))}

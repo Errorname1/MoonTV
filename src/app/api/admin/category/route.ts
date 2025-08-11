@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  if (storageType === 'd1' || storageType === 'upstash') {
+  if (storageType === 'upstash') {
     return NextResponse.json(
       {
-        error: 'D1 和 Upstash 实例请通过配置文件调整',
+        error: 'Upstash 实例请通过配置文件调整',
       },
       { status: 400 }
     );

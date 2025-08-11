@@ -10,6 +10,7 @@ function parseChangelog(content) {
   const versions = [];
   let currentVersion = null;
   let currentSection = null;
+  let inVersionContent = false;
 
   for (const line of lines) {
     const trimmedLine = line.trim();
@@ -29,27 +30,38 @@ function parseChangelog(content) {
         added: [],
         changed: [],
         fixed: [],
+        content: [], // 用于存储原始内容，当没有分类时使用
       };
       currentSection = null;
+      inVersionContent = true;
       continue;
     }
 
-    // 匹配章节标题
-    if (trimmedLine === '### Added') {
-      currentSection = 'added';
-      continue;
-    } else if (trimmedLine === '### Changed') {
-      currentSection = 'changed';
-      continue;
-    } else if (trimmedLine === '### Fixed') {
-      currentSection = 'fixed';
-      continue;
-    }
+    // 如果遇到下一个版本或到达文件末尾，停止处理当前版本
+    if (inVersionContent && currentVersion) {
+      // 匹配章节标题
+      if (trimmedLine === '### Added') {
+        currentSection = 'added';
+        continue;
+      } else if (trimmedLine === '### Changed') {
+        currentSection = 'changed';
+        continue;
+      } else if (trimmedLine === '### Fixed') {
+        currentSection = 'fixed';
+        continue;
+      }
 
-    // 匹配条目: - 内容
-    if (trimmedLine.startsWith('- ') && currentSection && currentVersion) {
-      const entry = trimmedLine.substring(2);
-      currentVersion[currentSection].push(entry);
+      // 匹配条目: - 内容
+      if (trimmedLine.startsWith('- ') && currentSection) {
+        const entry = trimmedLine.substring(2);
+        currentVersion[currentSection].push(entry);
+      } else if (
+        trimmedLine &&
+        !trimmedLine.startsWith('#') &&
+        !trimmedLine.startsWith('###')
+      ) {
+        currentVersion.content.push(trimmedLine);
+      }
     }
   }
 
@@ -57,6 +69,19 @@ function parseChangelog(content) {
   if (currentVersion) {
     versions.push(currentVersion);
   }
+
+  // 后处理：如果某个版本没有分类内容，但有 content，则将 content 放到 changed 中
+  versions.forEach((version) => {
+    const hasCategories =
+      version.added.length > 0 ||
+      version.changed.length > 0 ||
+      version.fixed.length > 0;
+    if (!hasCategories && version.content.length > 0) {
+      version.changed = version.content;
+    }
+    // 清理 content 字段
+    delete version.content;
+  });
 
   return { versions };
 }
@@ -170,10 +195,19 @@ function main() {
 
     fs.writeFileSync(outputPath, tsContent, 'utf-8');
 
-    // 更新版本文件
-    console.log('正在更新版本文件...');
-    updateVersionFile(latestVersion);
-    updateVersionTs(latestVersion);
+    // 检查是否在 GitHub Actions 环境中运行
+    const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
+
+    if (isGitHubActions) {
+      // 在 GitHub Actions 中，更新版本文件
+      console.log('正在更新版本文件...');
+      updateVersionFile(latestVersion);
+      updateVersionTs(latestVersion);
+    } else {
+      // 在本地运行时，只提示但不更新版本文件
+      console.log('🔧 本地运行模式：跳过版本文件更新');
+      console.log('💡 版本文件更新将在 git tag 触发的 release 工作流中完成');
+    }
 
     console.log(`✅ 成功生成 ${outputPath}`);
     console.log(`📊 版本统计:`);
@@ -183,7 +217,7 @@ function main() {
       );
     });
 
-    console.log('\n🎉 所有更新完成!');
+    console.log('\n🎉 转换完成!');
   } catch (error) {
     console.error('❌ 转换失败:', error);
     process.exit(1);
