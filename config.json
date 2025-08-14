@@ -88,16 +88,6 @@
   },
   "custom_category": [
     {
-      "name": "印尼",
-      "type": "movie",
-      "query": "印尼"
-    },
-    {
-      "name": "泰国",
-      "type": "movie",
-      "query": "泰国"
-    },
-    {
       "name": "动作",
       "type": "movie",
       "query": "动作"
@@ -172,7 +162,16 @@
       "type": "movie",
       "query": "恐怖"
     },
-    
+    {
+      "name": "印尼",
+      "type": "movie",
+      "query": "印尼"
+    },
+    {
+      "name": "泰国",
+      "type": "movie",
+      "query": "泰国"
+    },
     {
       "name": "港剧",
       "type": "tv",
